@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>X</title>
+<style>
+:root{
+ --bg:#000;--fg:#e7e9ea;--muted:#71767b;--line:#2f3336;
+ --blue:#1d9bf0;--hover:#16181c;--card:#16181c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,Tahoma,sans-serif}
+button,input,textarea{font:inherit}
+button{color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue)}
+button:disabled{opacity:.45;cursor:default}
+svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;
+stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.app{max-width:1280px;margin:auto;display:grid;
+grid-template-columns:245px minmax(0,600px) 350px;justify-content:center;min-height:100dvh}
+.sidebar{height:100dvh;position:sticky;top:0;border-left:1px solid var(--line);
+padding:8px 14px;display:flex;flex-direction:column;gap:4px}
+.logo{width:48px;height:48px;display:grid;place-items:center;margin-bottom:5px}
+.logo svg{width:34px;height:34px;stroke-width:1.7}
+.nav{width:fit-content;min-width:50px;display:flex;align-items:center;gap:20px;
+padding:12px 13px;border:0;border-radius:30px;background:transparent;font-size:19px}
+.nav:hover,.iconbtn:hover{background:var(--hover)}
+.nav.active{font-weight:750}
+.composeNav{background:var(--blue);border:0;border-radius:30px;
+padding:15px;margin-top:10px;font-weight:700;width:90%;font-size:16px}
+.main{min-width:0;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.top{height:54px;position:sticky;top:0;z-index:5;background:#000e;
+backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 16px;
+font-size:20px;font-weight:750;border-bottom:1px solid var(--line)}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{position:relative;flex:1;padding:17px 4px;background:none;border:0;color:var(--muted)}
+.tabs button.active{color:var(--fg);font-weight:700}
+.tabs button.active:after{content:"";position:absolute;bottom:0;right:25%;width:50%;
+height:4px;background:var(--blue);border-radius:5px}
+.composer{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;flex-shrink:0;
+background:#202327}
+.composerbody{flex:1;min-width:0}
+textarea{display:block;width:100%;resize:vertical;min-height:70px;padding:12px 0;
+background:transparent;color:var(--fg);border:0;outline:none;font-size:19px;line-height:1.7}
+textarea::placeholder{color:var(--muted)}
+.composerfoot{display:flex;align-items:center;justify-content:space-between;
+border-top:1px solid var(--line);padding-top:9px;gap:8px}
+.toolrow{display:flex;gap:4px;color:var(--blue)}
+.iconbtn{width:37px;height:37px;border:0;border-radius:50%;background:transparent;
+display:grid;place-items:center;color:inherit}
+.iconbtn svg{width:21px;height:21px}
+.primary{border:0;border-radius:30px;background:var(--blue);color:#fff;
+font-weight:750;padding:10px 20px}
+.primary:hover,.composeNav:hover{background:#1a8cd8}
+.tweet{display:flex;gap:11px;padding:13px 15px;border-bottom:1px solid var(--line);
+transition:background .12s}
+.tweet:hover{background:#050505}
+.tbody{flex:1;min-width:0}
+.identity{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-height:24px}
+.name{font-weight:750;overflow-wrap:anywhere}
+.handle,.time{font-size:13px;color:var(--muted)}
+.more{margin-right:auto;background:transparent;border:0;border-radius:50%;
+width:30px;height:30px;display:grid;place-items:center;color:var(--muted)}
+.more svg{width:19px;height:19px}
+.verified{display:inline-flex;align-items:center;justify-content:center;
+width:18px;height:18px;flex:0 0 18px;vertical-align:middle}
+.verified svg{width:18px;height:18px;stroke:none}
+.ttext{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.85;margin-top:4px}
+.media{width:100%;display:block;max-height:520px;object-fit:cover;
+border:1px solid var(--line);border-radius:16px;margin-top:10px}
+.actions{display:flex;justify-content:space-between;max-width:450px;margin-top:12px;
+margin-left:0;color:var(--muted)}
+.action{display:flex;align-items:center;gap:5px;padding:5px;border:0;
+border-radius:20px;background:transparent;color:inherit;font-size:12px}
+.action svg{width:19px;height:19px}
+.action.reply:hover{color:var(--blue)}
+.action.repost:hover,.action.reposted{color:#00ba7c}
+.action.like:hover,.action.liked{color:#f91880}
+.action.share:hover{color:var(--blue)}
+.empty{padding:55px 25px;text-align:center;color:var(--muted);line-height:2}
+.page{display:none}.page.active{display:block}
+.right{padding:12px 16px}
+.search{width:100%;background:#202327;color:var(--fg);border:1px solid transparent;
+border-radius:30px;padding:13px 17px;outline:none}
+.search:focus{border-color:var(--blue)}
+.sidecard{margin-top:16px;background:#080808;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.sidecard h2{font-size:20px;padding:15px;margin:0}
+.trend{padding:12px 15px;border-top:1px solid transparent}
+.trend:hover{background:var(--hover)}
+.trend small{display:block;color:var(--muted);margin-bottom:6px}
+.trend strong{display:block}
+.showmore{border:0;background:none;color:var(--blue);padding:15px}
+.profilecover{height:190px;background:linear-gradient(135deg,#15202b,#263746,#162d42);
+background-position:center;background-size:cover}
+.profiledata{padding:12px 16px;border-bottom:1px solid var(--line)}
+.profilebuttons{display:flex;justify-content:flex-end;height:40px}
+.outline{background:transparent;border:1px solid var(--muted);border-radius:24px;
+padding:8px 15px;font-weight:700}
+.profileavatar{width:90px;height:90px;border:4px solid #000;margin-top:-50px;
+position:relative}
+.profiledata h2{font-size:20px;margin:12px 0 3px;display:flex;align-items:center;gap:5px}
+.profiledata p{margin:7px 0;color:var(--muted);font-size:14px;line-height:1.8}
+.profilebio{color:var(--fg)!important}
+.metrics{display:flex;gap:15px;font-size:13px;margin:13px 0}
+.metrics span{color:var(--muted)}
+.metrics b{color:var(--fg)}
+.modalback{position:fixed;inset:0;z-index:30;background:#5b708080;
+display:none;align-items:flex-start;justify-content:center;padding:30px 12px}
+.modalback.open{display:flex}
+.modal{width:min(600px,100%);max-height:90dvh;overflow:auto;background:#000;
+border:1px solid var(--line);border-radius:18px;padding:17px}
+.modalhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modalhead strong{font-size:18px}
+.modal .avatar{width:46px;height:46px}
+.modalbody{display:flex;gap:12px}
+.modalbody>div{flex:1;min-width:0}
+.modal textarea{min-height:140px}
+.field{width:100%;margin:9px 0 17px;background:#000;color:var(--fg);
+border:1px solid var(--line);border-radius:8px;padding:12px}
+.field:focus{border-color:var(--blue)}
+.fieldlabel{font-size:13px;color:var(--muted)}
+.preview{width:100%;max-height:350px;object-fit:contain;border-radius:12px;margin-top:10px}
+.profile-photo-button{position:absolute;bottom:0;left:0;border:0;border-radius:50%;
+width:31px;height:31px;background:#000c;display:grid;place-items:center}
+.profile-photo-button svg{width:17px;height:17px}
+.mobilebar{display:none}
+@media(min-width:761px) and (max-width:1050px){
+ .app{grid-template-columns:76px minmax(0,600px)}
+ .sidebar{align-items:center;padding:8px}
+ .nav{width:50px;justify-content:center;padding:12px}
+ .nav .navtext{display:none}
+ .composeNav{width:50px;height:50px;padding:0;font-size:0}
+ .composeNav svg{margin:auto}
+ .right{display:none}
+}
+@media(max-width:760px){
+ .app{display:block;padding-bottom:60px}
+ .sidebar,.right{display:none}
+ .main{border:0}
+ .top{height:52px;font-size:19px}
+ .mobilebar{position:fixed;bottom:0;right:0;left:0;height:58px;
+ padding-bottom:env(safe-area-inset-bottom);background:#000f;
+ border-top:1px solid var(--line);z-index:15;display:flex;justify-content:space-around}
+ .mobilebar button{flex:1;background:transparent;border:0;display:grid;place-items:center}
+ .mobilebar button.active{color:var(--blue)}
+ .mobilebar svg{width:25px;height:25px}
+ .tweet{padding:12px}
+ .composer{padding:12px}
+ .modalback{padding:15px 8px}
+}
+</style>
+</head>
+<body>
+
+<!-- آیکون‌ها همگی SVG هستند؛ بدون ایموجی -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.3 16.3 5 5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h3l2-3h4l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></symbol>
+<symbol id="i-reply" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></symbol>
+<symbol id="i-repost" viewBox="0 0 24 24"><path d="m17 1 4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8z"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5"/><path d="M5 12v8h14v-8"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></symbol>
+</svg>
+
+<div class="app">
+<aside class="sidebar">
+ <div class="logo" aria-label="X">
+  <svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.5 22H2.3l7.3-8.4L1.8 2h6.5l4.4 6.9zm-1.1 17.9h1.7L7.3 4H5.5z"/></svg>
+ </div>
+ <button class="nav active" data-page="home"><svg><use href="#i-home"/></svg><span class="navtext">خانه</span></button>
+ <button class="nav" data-page="search"><svg><use href="#i-search"/></svg><span class="navtext">جست‌وجو</span></button>
+ <button class="nav" data-page="notifications"><svg><use href="#i-bell"/></svg><span class="navtext">اعلان‌ها</span></button>
+ <button class="nav" data-page="messages"><svg><use href="#i-mail"/></svg><span class="navtext">پیام‌ها</span></button>
+ <button class="nav" data-page="profile"><svg><use href="#i-user"/></svg><span class="navtext">پروفایل</span></button>
+ <button class="composeNav" id="openCompose">پست جدید</button>
+</aside>
+
+<main class="main">
+<section class="page active" id="home">
+ <div class="top">خانه</div>
+ <div class="tabs"><button class="active" data-feed="all">برای شما</button><button data-feed="following">دنبال‌شده‌ها</button></div>
+ <div class="composer">
+  <img class="avatar" id="smallAvatar" alt="عکس پروفایل">
+  <div class="composerbody">
+   <textarea id="quickText" maxlength="280" placeholder="چه خبر؟"></textarea>
+   <div class="composerfoot">
+    <div class="toolrow"><button class="iconbtn" id="quickImage" title="تصویر"><svg><use href="#i-image"/></svg></button></div>
+    <button class="primary" id="quickPost" disabled>پست</button>
+   </div>
+  </div>
+ </div>
+ <div id="feed"></div>
+</section>
+
+<section class="page" id="search">
+ <div class="top">جست‌وجو</div>
+ <div style="padding:15px"><input class="search" id="searchInput" placeholder="جست‌وجو در پست‌ها"><div id="results"></div></div>
+</section>
+
+<section class="page" id="notifications">
+ <div class="top">اعلان‌ها</div><div id="notices"></div>
+</section>
+
+<section class="page" id="messages">
+ <div class="top">پیام‌ها</div>
+ <div class="empty">پیام‌رسانی واقعی به سرور نیاز دارد.</div>
+</section>
+
+<section class="page" id="profile">
+ <div class="top">پروفایل</div>
+ <div class="profilecover" id="cover"></div>
+ <div class="profiledata">
+  <div class="profilebuttons"><button class="outline" id="editProfile">ویرایش پروفایل</button></div>
+  <div style="position:relative;width:max-content">
+   <img class="avatar profileavatar" id="bigAvatar" alt="عکس پروفایل">
+   <button class="profile-photo-button" id="changeAvatar" title="تغییر عکس"><svg><use href="#i-camera"/></svg></button>
+  </div>
+  <h2><span id="pName"></span><span class="verified" aria-label="نشان نمایشی">
+   <svg viewBox="0 0 24 24"><path fill="#1d9bf0" d="M12 0 14.9 2.1 18.5 1.8 20 5.1 23.2 6.8 22.8 10.4 24 13.7 21.5 16.4 21 20 17.5 20.8 15 23.2 11.6 22 8.2 23.1 5.8 20.5 2.3 19.7 2 16.1 0 13.3 1.4 10 1 6.5 4.3 4.8 5.8 1.5 9.4 1.9Z"/><path d="m6.7 12.1 3.4 3.3 7.1-7.1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span></h2>
+  <p id="pHandle" dir="ltr" style="text-align:right"></p>
+  <p id="pBio" class="profilebio"></p>
+  <div class="metrics"><div><b id="pPosts">0</b> <span>پست</span></div></div>
+ </div>
+ <div class="tabs"><button class="active">پست‌ها</button><button>پاسخ‌ها</button><button>رسانه</button></div>
+ <div id="myPosts"></div>
+</section>
+</main>
+
+<aside class="right">
+ <input class="search" id="sideSearch" placeholder="جست‌وجو">
+ <div class="sidecard"><h2>چه خبر؟</h2>
+  <div class="trend"><small>موضوع داغ · ایران</small><strong>اخبار روز</strong><small>موضوعات پرطرفدار</small></div>
+  <div class="trend"><small>موضوع داغ · فناوری</small><strong>فناوری</strong><small>گفت‌وگوهای تازه</small></div>
+  <div class="trend"><small>موضوع داغ · ورزش</small><strong>ورزش</strong><small>بحث‌های ورزشی</small></div>
+  <button class="showmore">نمایش بیشتر</button>
+ </div>
+</aside>
+</div>
+
+<nav class="mobilebar">
+ <button class="active" data-page="home" title="خانه"><svg><use href="#i-home"/></svg></button>
+ <button data-page="search" title="جست‌وجو"><svg><use href="#i-search"/></svg></button>
+ <button id="mobileCompose" title="پست جدید"><svg><use href="#i-edit"/></svg></button>
+ <button data-page="notifications" title="اعلان‌ها"><svg><use href="#i-bell"/></svg></button>
+ <button data-page="messages" title="پیام‌ها"><svg><use href="#i-mail"/></svg></button>
+</nav>
+
+<div class="modalback" id="composeModal">
+ <div class="modal">
+  <div class="modalhead"><button class="iconbtn" id="closeCompose" aria-label="بستن"><svg><use href="#i-close"/></svg></button><strong>پست جدید</strong><button class="primary" id="publish">پست</button></div>
+  <div class="modalbody">
+   <img class="avatar" id="modalAvatar" alt="">
+   <div><textarea id="postText" maxlength="280" placeholder="چه خبر؟"></textarea>
+    <div id="postPreview"></div>
+    <div class="composerfoot">
+     <div class="toolrow"><button class="iconbtn" id="selectPostImage" title="افزودن تصویر"><svg><use href="#i-image"/></svg></button></div>
+     <span class="time" id="counter">0/280</span>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="modalback" id="profileModal">
+ <div class="modal">
+  <div class="modalhead"><button class="iconbtn" id="closeProfile" aria-label="بستن"><svg><use href="#i-close"/></svg></button><strong>ویرایش پروفایل</strong><button class="primary" id="saveProfile">ذخیره</button></div>
+  <label class="fieldlabel">نام</label><input class="field" id="editName" maxlength="50">
+  <label class="fieldlabel">آیدی</label><input class="field" id="editHandle" maxlength="30" dir="ltr">
+  <label class="fieldlabel">معرفی</label><textarea class="field" id="editBio" maxlength="160"></textarea>
+  <label class="fieldlabel">عکس پروفایل</label><input class="field" id="avatarFile" type="file" accept="image/*">
+  <label class="fieldlabel">عکس سربرگ</label><input class="field" id="coverFile" type="file" accept="image/*">
+ </div>
+</div>
+<input id="imageFile" type="file" accept="image/*" hidden>
+
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="x_mockup_v3";
+const defaultState={name:"اخبار مدارس کرمانشاه",handle:"Kermanshah_School",
+bio:"",avatar:"",cover:"",posts:[],notices:[]};
+let state;
+try{state={...defaultState,...JSON.parse(localStorage.getItem(KEY)||"{}")}}
+catch(e){state={...defaultState}}
+let pendingImage="";
+let feedMode="all";
+
+const svgIcon=(id)=>`<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify(state))}
+ catch(e){alert("حافظه مرورگر پر شده است؛ عکس کوچک‌تری انتخاب کن.")}
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function badge(){return `<span class="verified" title="نشان آبی نمایشی" aria-label="نشان نمایشی"><svg viewBox="0 0 24 24"><path fill="#1d9bf0" d="M12 0 14.9 2.1 18.5 1.8 20 5.1 23.2 6.8 22.8 10.4 24 13.7 21.5 16.4 21 20 17.5 20.8 15 23.2 11.6 22 8.2 23.1 5.8 20.5 2.3 19.7 2 16.1 0 13.3 1.4 10 1 6.5 4.3 4.8 5.8 1.5 9.4 1.9Z"/><path d="m6.7 12.1 3.4 3.3 7.1-7.1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`}
+function defaultAvatar(){
+ return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(
+ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="#202327"/><circle cx="50" cy="37" r="18" fill="#71767b"/><path d="M15 94c2-23 15-34 35-34s33 11 35 34" fill="#71767b"/></svg>');
+}
+function avatar(src){return src||defaultAvatar()}
+function fmt(date){
+ const d=new Date(date);
+ if(!Number.isFinite(d.getTime()))return "";
+ return new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"2-digit",day:"2-digit",
+ hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+}
+function updateProfile(){
+ $("smallAvatar").src=avatar(state.avatar);
+ $("bigAvatar").src=avatar(state.avatar);
+ $("modalAvatar").src=avatar(state.avatar);
+ $("pName").textContent=state.name;
+ $("pHandle").textContent="@"+state.handle;
+ $("pBio").textContent=state.bio;
+ $("pPosts").textContent=state.posts.filter(p=>p.handle===state.handle).length;
+ if(state.cover)$("cover").style.backgroundImage=`url("${state.cover}")`;
+}
+function postMarkup(p){
+ return `<article class="tweet" data-id="${esc(p.id)}">
+ <img class="avatar" src="${avatar(p.avatar)}" alt="">
+ <div class="tbody">
+ <div class="identity"><span class="name">${esc(p.name)}</span>${badge()}
+ <span class="handle" dir="ltr">@${esc(p.handle)}</span>
+ <span class="time">· ${esc(fmt(p.date))}</span>
+ <button class="more" data-action="more" aria-label="بیشتر">${svgIcon("more")}</button></div>
+ ${p.text?`<div class="ttext">${esc(p.text)}</div>`:""}
+ ${p.image?`<img class="media" src="${p.image}" alt="تصویر پست" loading="lazy">`:""}
+ <div class="actions">
+ <button class="action reply" data-action="reply" title="پاسخ">${svgIcon("reply")}<span>${p.replies||0}</span></button>
+ <button class="action repost ${p.reposted?"reposted":""}" data-action="repost" title="بازنشر">${svgIcon("repost")}<span>${p.reposts||0}</span></button>
+ <button class="action like ${p.liked?"liked":""}" data-action="like" title="پسندیدن">${svgIcon("heart")}<span>${p.likes||0}</span></button>
+ <button class="action share" data-action="share" title="اشتراک‌گذاری">${svgIcon("share")}</button>
+ </div></div></article>`;
+}
+function render(list=state.posts,target="feed"){
+ $(target).innerHTML=list.length?list.map(postMarkup).join(""):'<div class="empty">هنوز پستی منتشر نشده است.</div>';
+}
+function renderProfilePosts(){render(state.posts.filter(p=>p.handle===state.handle),"myPosts")}
+function go(page){
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===page));
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ if(page==="profile")renderProfilePosts();
+ if(page==="notifications")renderNotices();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+function open(id){$(id).classList.add("open")}
+function close(id){$(id).classList.remove("open")}
+function addPost(text,image){
+ text=text.trim();
+ if(!text&&!image)return false;
+ state.posts.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+ name:state.name,handle:state.handle,avatar:state.avatar,text,image:image||"",
+ date:new Date().toISOString(),likes:0,reposts:0,replies:0,liked:false,reposted:false});
+ save();render();renderProfilePosts();updateProfile();return true;
+}
+$("openCompose").onclick=()=>open("composeModal");
+$("mobileCompose").onclick=()=>open("composeModal");
+$("closeCompose").onclick=()=>close("composeModal");
+$("closeProfile").onclick=()=>close("profileModal");
+
+$("quickText").oninput=()=>{$("quickPost").disabled=!$("quickText").value.trim()};
+$("quickPost").onclick=()=>{if(addPost($("quickText").value,"")){$("quickText").value="";$("quickPost").disabled=true}};
+$("postText").oninput=()=>$("counter").textContent=$("postText").value.length+"/280";
+
+function pickImage(cb){
+ const input=$("imageFile");input.value="";
+ input.onchange=()=>{
+  const file=input.files&&input.files[0];if(!file)return;
+  if(!file.type.startsWith("image/"))return alert("یک عکس انتخاب کن.");
+  if(file.size>4*1024*1024)return alert("حجم عکس باید کمتر از ۴ مگابایت باشد.");
+  const reader=new FileReader();
+  reader.onload=()=>cb(reader.result);
+  reader.onerror=()=>alert("خواندن عکس انجام نشد.");
+  reader.readAsDataURL(file);
+ };
+ input.click();
+}
+$("quickImage").onclick=()=>pickImage(img=>{
+ pendingImage=img;
+ $("postPreview").innerHTML=`<img class="preview" src="${img}" alt="پیش‌نمایش عکس">`;
+ open("composeModal");
+});
+$("selectPostImage").onclick=()=>pickImage(img=>{
+ pendingImage=img;
+ $("postPreview").innerHTML=`<img class="preview" src="${img}" alt="پیش‌نمایش عکس">`;
+});
+$("publish").onclick=()=>{
+ if(addPost($("postText").value,pendingImage)){
+ $("postText").value="";$("counter").textContent="0/280";
+ pendingImage="";$("postPreview").replaceChildren();
+ close("composeModal");go("home");
+ }
+};
+
+$("editProfile").onclick=()=>{
+ $("editName").value=state.name;
+ $("editHandle").value=state.handle;
+ $("editBio").value=state.bio;
+ open("profileModal");
+};
+$("changeAvatar").onclick=()=>$("avatarFile").click();
+function readImage(input,callback){
+ const f=input.files&&input.files[0];if(!f)return;
+ if(!f.type.startsWith("image/"))return alert("فایل عکس انتخاب کن.");
+ if(f.size>4*1024*1024)return alert("عکس باید کمتر از ۴ مگابایت باشد.");
+ const r=new FileReader();r.onload=()=>callback(r.result);r.readAsDataURL(f);
+}
+$("avatarFile").onchange=()=>readImage($("avatarFile"),img=>{state.avatar=img;updateProfile()});
+$("coverFile").onchange=()=>readImage($("coverFile"),img=>{state.cover=img;$("cover").style.backgroundImage=`url("${img}")`});
+$("saveProfile").onclick=()=>{
+ const name=$("editName").value.trim();
+ const handle=$("editHandle").value.trim().replace(/^@/,"").replace(/[^a-zA-Z0-9_]/g,"");
+ if(!name||!handle)return alert("نام و آیدی را وارد کن.");
+ state.name=name;state.handle=handle;state.bio=$("editBio").value.trim();
+ save();updateProfile();render();renderProfilePosts();close("profileModal");
+};
+document.addEventListener("click",async e=>{
+ const btn=e.target.closest("[data-action]");if(!btn)return;
+ const article=btn.closest("[data-id]");if(!article)return;
+ const p=state.posts.find(x=>x.id===article.dataset.id);if(!p)return;
+ switch(btn.dataset.action){
+ case "like":p.liked=!p.liked;p.likes=Math.max(0,p.likes+(p.liked?1:-1));break;
+ case "repost":p.reposted=!p.reposted;p.reposts=Math.max(0,p.reposts+(p.reposted?1:-1));break;
+ case "reply":{
+  const answer=prompt("پاسخ:");
+  if(!answer||!answer.trim())return;
+  p.replies++;
+  state.notices.unshift({text:"پاسخ شما: "+answer.trim(),date:new Date().toISOString()});
+  break;
+ }
+ case "share":
+  try{
+   if(navigator.share)await navigator.share({title:p.name,text:p.text});
+   else if(navigator.clipboard){await navigator.clipboard.writeText(p.text);alert("متن کپی شد.");}
+   else prompt("متن پست:",p.text);
+  }catch(err){}
+  return;
+ case "more":
+  if(!confirm("این پست از شبیه‌ساز حذف شود؟"))return;
+  state.posts=state.posts.filter(x=>x.id!==p.id);break;
+ }
+ save();render();renderProfilePosts();updateProfile();
+});
+function search(q){
+ q=q.trim().toLowerCase();
+ render(q?state.posts.filter(p=>(p.text+" "+p.name+" "+p.handle).toLowerCase().includes(q)):[],"results");
+}
+$("searchInput").oninput=e=>search(e.target.value);
+$("sideSearch").onkeydown=e=>{
+ if(e.key==="Enter"){go("search");$("searchInput").value=e.target.value;search(e.target.value);}
+};
+document.querySelectorAll("[data-feed]").forEach(b=>b.onclick=()=>{
+ feedMode=b.dataset.feed;
+ document.querySelectorAll("[data-feed]").forEach(x=>x.classList.toggle("active",x===b));
+ render(feedMode==="following"?[]:state.posts);
+});
+function renderNotices(){
+ $("notices").innerHTML=state.notices.length?state.notices.map(n=>
+ `<article class="tweet"><div class="tbody">${esc(n.text)}<div class="time">${esc(fmt(n.date))}</div></div></article>`
+ ).join(""):'<div class="empty">اعلانی وجود ندارد.</div>';
+}
+document.querySelectorAll(".modalback").forEach(m=>m.addEventListener("click",e=>{
+ if(e.target===m)close(m.id);
+}));
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape")document.querySelectorAll(".modalback.open").forEach(m=>close(m.id));
+});
+updateProfile();render();renderProfilePosts();
+})();
+</script>
+</body>
+</html>
